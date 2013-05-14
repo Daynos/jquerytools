@@ -17,9 +17,9 @@
 	
 	$.tools = $.tools || {version: '@VERSION'};
 	
-	var instances = [],
+	var instances = [], 
 		formatters = {},
-		 tool,
+		 tool, 
 		 
 		 // h=72, j=74, k=75, l=76, down=40, left=37, up=38, right=39
 		 KEYS = [75, 76, 38, 39, 74, 72, 40, 37],
@@ -27,7 +27,7 @@
 	
 	tool = $.tools.dateinput = {
 		
-		conf: { 
+		conf: {
 			format: 'mm/dd/yy',
 			formatter: 'default',
 			selectors: false,
@@ -50,26 +50,26 @@
 				// ids
 				root: 0,
 				head: 0,
-				title: 0, 
+				title: 0,
 				prev: 0,
 				next: 0,
 				month: 0,
-				year: 0, 
+				year: 0,
 				days: 0,
 				
 				body: 0,
 				weeks: 0,
-				today: 0,		
+				today: 0,
 				current: 0,
 				
 				// classnames
-				week: 0, 
+				week: 0,
 				off: 0,
 				sunday: 0,
 				focus: 0,
 				disabled: 0,
 				trigger: 0
-			}  
+			}
 		},
 		
 		addFormatter: function(name, fn) {
@@ -100,17 +100,17 @@
 	function dayAm(year, month) {
 		return new Date(year, month + 1, 0).getDate();
 	}
- 
+
 	function zeropad(val, len) {
 		val = '' + val;
 		len = len || 2;
 		while (val.length < len) { val = "0" + val; }
 		return val;
-	}  
+	} 
 	
 	// thanks: http://stevenlevithan.com/assets/misc/date.format.js 
 	var tmpTag = $("<a/>");
-	
+
 	function format(formatter, date, text, lang) {
 	  var d = date.getDate(),
 			D = date.getDay(),
@@ -118,7 +118,7 @@
 			y = date.getFullYear(),
 
 			flags = {
-				d:    d,
+				d: d,
 				dd:   zeropad(d),
 				ddd:  LABELS[lang].shortDays[D],
 				dddd: LABELS[lang].days[D],
@@ -136,7 +136,7 @@
 		return tmpTag.html(ret).html();
 		
 	}
-	
+
 	tool.addFormatter('default', function(text, date, flags, lang) {
 		return text.replace(/d{1,4}|m{1,4}|yy(?:yy)?|"[^"]*"|'[^']*'/g, function ($0) {
 			return $0 in flags ? flags[$0] : $0;
@@ -151,14 +151,14 @@
 	
 	function integer(val) {
 		return parseInt(val, 10);	
-	} 
+	}
 
 	function isSameDay(d1, d2)  {
 		return d1.getFullYear() === d2.getFullYear() && 
 			d1.getMonth() == d2.getMonth() &&
 			d1.getDate() == d2.getDate(); 
 	}
-
+	
 	function parseDate(val) {
 		
 		if (val === undefined) { return; }
@@ -186,8 +186,8 @@
 	
 //}}}
 		 
-	
-	function Dateinput(input, conf)  { 
+
+	function Dateinput(input, conf)  { 		
 
 		// variables
 		var self = this,  
@@ -201,8 +201,8 @@
 			 pm, nm, 
 			 currYear, currMonth, currDay,
 			 value = input.attr("data-value") || conf.value || input.val(), 
-			 min = input.attr("min") || conf.min,  
-			 max = input.attr("max") || conf.max,
+		 	min = input.attr("min") || conf.min,  
+			max = input.attr("max") || conf.max,
 			 opened,
 			 original;
 
@@ -210,7 +210,7 @@
 		if (min === 0) { min = "0"; }
 		
 		// use sane values for value, min & max		
-		value = parseDate(value) || now;  
+		value = parseDate(value) || now;
 		
 		min   = parseDate(min || new Date(yearNow + conf.yearRange[0], 1, 1));
 		max   = parseDate(max || new Date( yearNow + conf.yearRange[1]+ 1, 1, -1));
@@ -258,7 +258,7 @@
 				var monthSelector = $("<select/>").attr("id", css.month),
 					 yearSelector = $("<select/>").attr("id", css.year);				
 				title.html(monthSelector.add(yearSelector));
-			}						
+			}
 			
 			// day titles
 			var days = root.find("#" + css.days); 
@@ -269,7 +269,7 @@
 			}
 			
 			$("body").append(root);
-		}	
+		}
 		
 				
 		// trigger icon
@@ -313,7 +313,7 @@
 			// formatting			
 			input.val(format(conf.formatter, date, conf.format, conf.lang));
 			
-      // change
+			// change
 			e.type = "change";
 			fire.trigger(e);
               
@@ -351,7 +351,7 @@
 					if (!opened) { 
 						self.show(e); 
 						return e.preventDefault();
-					} 
+					}
 					
 					var days = $("#" + css.weeks + " a"), 
 						 el = $("." + css.focus),
@@ -390,7 +390,7 @@
 				// enter
 				if (key == 13) {
 					if (!$(e.target).is("select")) {
-						$("." + css.focus).click();
+						$("." + css.focus).click(); 
 					}
 				}
 				
@@ -409,8 +409,16 @@
 			}); 
 		}
 //}}}
-
-
+		
+		function isSelectable (date) {
+			//console.log (conf.isSelectable);
+			if ($.isFunction(conf.isSelectable)) {
+				return conf.isSelectable(date);
+			} else {
+				return true;
+			}
+		}
+		
 		$.extend(self, {
 
       
@@ -427,27 +435,27 @@
 				e.type = "onBeforeShow";
 				fire.trigger(e);
 				if (e.isDefaultPrevented()) { return; }
-			
+
 				$.each(instances, function() {
 					this.hide();	
 				});
 				
 				opened = true;
 				
-        // month selector
-        monthSelector.off("change").change(function() {
-          self.setValue(integer(yearSelector.val()), integer($(this).val()));
-        });
+				// month selector
+		        monthSelector.off("change").change(function() {
+		          self.setValue(integer(yearSelector.val()), integer($(this).val()));
+				});
 
-        // year selector
-        yearSelector.off("change").change(function() {
-          self.setValue(integer($(this).val()), integer(monthSelector.val()));
-        });
+				// year selector
+		        yearSelector.off("change").change(function() {
+		          self.setValue(integer($(this).val()), integer(monthSelector.val()));
+				});
         
 				// prev / next month
 				pm = root.find("#" + css.prev).off("click").click(function(e) {
 					if (!pm.hasClass(css.disabled)) {	
-					  self.addMonth(-1);
+						self.addMonth(-1);
 					}
 					return false;
 				});
@@ -457,7 +465,7 @@
 						self.addMonth();
 					}
 					return false;
-				});	 
+				});
 				
 				// set date
 				self.setValue(value);				 
@@ -485,7 +493,7 @@
 				}
 				
 				return self;
-			}, 
+			},
 
       /**
       *   @public
@@ -493,7 +501,7 @@
       *   Set the value of the dateinput
       */
 			setValue: function(year, month, day)  {
-				
+
 				var date = integer(month) >= -1 ? new Date(integer(year), integer(month), integer(day == undefined || isNaN(day) ? 1 : day)) : 
 					year || value;				
 
@@ -505,7 +513,7 @@
 				
 				year = date.getFullYear();
 				month = date.getMonth();
-				day = date.getDate(); 
+				day = date.getDate();
 				
 				
 				// roll year & month
@@ -515,12 +523,12 @@
 				} else if (month == 12) {
 					month = 0;
 					year++;
-				} 
+				}
 				
 				if (!opened) { 
 					select(date, conf);
 					return self; 
-				} 				
+				} 
 				
 				currMonth = month;
 				currYear = year;
@@ -551,7 +559,7 @@
 						if (min < new Date(i + 1, 0, 1) && max > new Date(i, 0, 0)) {
 							yearSelector.append($("<option/>").text(i));
 						}
-					}		
+					}
 					
 					monthSelector.val(month);
 					yearSelector.val(year);
@@ -559,7 +567,7 @@
 				// title
 				} else {
 					title.html(labels.months[month] + " " + year);	
-				} 	   
+				}
 					 
 				// populate weeks
 				weeks.empty();				
@@ -573,31 +581,38 @@
 					if (j % 7 === 0) {
 						week = $("<div/>").addClass(css.week);
 						weeks.append(week);			
-					}					
+					}
 					
-					if (j < begin)  { 
-						a.addClass(css.off); 
+					if (j < begin) {
 						num = prevDays - begin + j + 1;
 						date = new Date(year, month-1, num);
-						
-					} else if (j >= begin + days)  {
-						a.addClass(css.off);	
+						if (!isSelectable(date)) {
+							a.addClass(css.disabled);
+						} else {
+							a.addClass(css.off);
+						}
+					} else if (j >= begin + days) {
 						num = j - days - begin + 1;
 						date = new Date(year, month+1, num);
-						
-					} else  { 
+						if (!isSelectable(date)) {
+							a.addClass(css.disabled);
+						} else {
+							a.addClass(css.off);
+						}
+					} else {
 						num = j - begin + 1;
-						date = new Date(year, month, num);  
-						
-						// current date
-						if (isSameDay(value, date)) {
+						date = new Date(year, month, num);
+
+						if (!isSelectable(date)) {
+							a.addClass(css.disabled);
+						} else if (isSameDay(value, date)) {
+							// current date
 							a.attr("id", css.current).addClass(css.focus);
-							
-						// today
 						} else if (isSameDay(now, date)) {
+							// today
 							a.attr("id", css.today);
-						}	 
-					}
+						}
+					} 
 					
 					// disabled
 					if (min && date < min) {
@@ -608,7 +623,7 @@
 						a.add(nm).addClass(css.disabled);						
 					}
 					
-					a.attr("href", "#" + num).text(num).data("date", date);					
+					a.attr("href", "#" + num).text(num).data("date", date);
 					
 					week.append(a);
 				}
@@ -620,9 +635,9 @@
 						$("#" + css.current).removeAttr("id");
 						el.attr("id", css.current);	 
 						select(el.data("date"), conf, e);
-					}
-					return false;
-				});
+						}
+						return false;
+					});
 
 				// sunday
 				if (css.sunday) {
@@ -633,7 +648,7 @@
 				} 
 				
 				return self;
-			}, 
+			},
 	//}}}
 	
 			setMin: function(val, fit) {
@@ -646,7 +661,7 @@
 				max = parseDate(val);
 				if (fit && value > max) { self.setValue(max); }
 				return self;
-			}, 
+			},
 			
 			today: function() {
 				return self.setValue(now);	
@@ -657,16 +672,16 @@
 			},
 			
 			addMonth: function(amount) {
-			  var targetMonth        = currMonth + (amount || 1),
-            daysInTargetMonth  = dayAm(currYear, targetMonth),
-            targetDay          = currDay <= daysInTargetMonth ? currDay : daysInTargetMonth;
-       
-        return this.setValue(currYear, targetMonth, targetDay);
+				var targetMonth        = currMonth + (amount || 1),
+				daysInTargetMonth  = dayAm(currYear, targetMonth),
+				targetDay          = currDay <= daysInTargetMonth ? currDay : daysInTargetMonth;
+				
+				return this.setValue(currYear, targetMonth, targetDay);
 			},
 			
 			addYear: function(amount) {
 				return this.setValue(currYear + (amount || 1), currMonth, currDay);	
-			},						
+			},
 			
 			destroy: function() {
 				input.add(document).off("click.d keydown.d");
@@ -706,11 +721,11 @@
 			},
 			
 			getInput: function() {
-				return input;	
+				return input;
 			},
 			
 			getCalendar: function() {
-				return root;	
+				return root;
 			},
 			
 			getValue: function(dateFormat) {
@@ -721,10 +736,10 @@
 				return opened;	
 			}
 			
-		}); 
+		});
 		
 		// callbacks	
-		$.each(['onBeforeShow','onShow','change','onHide'], function(i, name) {
+		$.each(['onBeforeShow','onShow','change','onHide'/*, 'isSelectable'*/], function(i, name) {
 				
 			// configuration
 			if ($.isFunction(conf[name]))  {
@@ -740,25 +755,25 @@
 
 		if (!conf.editable) {
 			
-			// show dateinput & assign keyboard shortcuts
+		// show dateinput & assign keyboard shortcuts
 			input.on("focus.d click.d", self.show).keydown(function(e) {
 	
-				var key = e.keyCode;
+			var key = e.keyCode;
 		
-				// open dateinput with navigation keyw
-				if (!opened &&  $(KEYS).index(key) >= 0) {
-					self.show(e);
-					return e.preventDefault();
+			// open dateinput with navigation keyw
+			if (!opened &&  $(KEYS).index(key) >= 0) {
+				self.show(e);
+				return e.preventDefault();
 			
 			// clear value on backspace or delete
 			} else if (key == 8 || key == 46) {
 				input.val("");
-				} 
+			}
 				
-				// allow tab
-				return e.shiftKey || e.ctrlKey || e.altKey || key == 9 ? true : e.preventDefault();   
+			// allow tab
+			return e.shiftKey || e.ctrlKey || e.altKey || key == 9 ? true : e.preventDefault();   
 				
-			});
+		});
 		}
 		
 		// initial value 		
@@ -766,7 +781,7 @@
 			select(value, conf);
 		}
 		
-	} 
+	}
 	
 	$.expr[':'].date = function(el) {
 		var type = el.getAttribute("type");
@@ -787,7 +802,7 @@
 			if (!val && key != 'prefix') { 
 				conf.css[key] = (conf.css.prefix || '') + (val || key);
 			}
-		});		
+		});
 	
 		var els;
 		
@@ -796,7 +811,7 @@
 			instances.push(el);
 			var input = el.getInput().data("dateinput", el);
 			els = els ? els.add(input) : input;	
-		});		
+		});
 	
 		return els ? els : this;		
 	}; 
